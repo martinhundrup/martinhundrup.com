@@ -11,6 +11,20 @@ export function createBody(options) {
   return body;
 }
 
+export function applyScrollImpulse(bodies, distance, bounds) {
+  // Objects lag behind the chamber as the page moves. Cap large anchor jumps
+  // and vary the response slightly so the scene sloshes rather than moving as one.
+  const impulse = clamp(distance, -90, 90) * .9;
+  for (const body of bodies) {
+    if (body.grabbed) continue;
+    body.vy += impulse / Math.sqrt(body.mass);
+    const offset = clamp(body.x / Math.max(1, bounds.width) - .5, -.5, .5);
+    body.spin = clamp(body.spin + impulse * offset * .008, -5, 5);
+    const speed = Math.hypot(body.vx, body.vy);
+    if (speed > MAX_SPEED) { body.vx *= MAX_SPEED / speed; body.vy *= MAX_SPEED / speed; }
+  }
+}
+
 export function axes(body) {
   const c = Math.cos(body.angle), s = Math.sin(body.angle);
   return [{ x: c, y: s }, { x: -s, y: c }];

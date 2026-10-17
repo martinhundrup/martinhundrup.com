@@ -1,4 +1,4 @@
-import { createBody, confineBody, settleBodies, stepWorld, MAX_SPEED } from './physics.js';
+import { createBody, applyScrollImpulse, confineBody, settleBodies, stepWorld, MAX_SPEED } from './physics.js';
 import { createGifPlayer } from './gif-player.js';
 
 export function initPlayground(panel) {
@@ -27,6 +27,8 @@ export function initPlayground(panel) {
   let frame = 0;
   let previousTime = 0;
   let accumulator = 0;
+  let previousScrollY = window.scrollY;
+  let scrollDistance = 0;
   const tick = 1 / 120;
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
@@ -41,7 +43,7 @@ export function initPlayground(panel) {
     pause.textContent = paused ? 'Play' : 'Pause';
     panel.classList.toggle('is-paused', paused);
     for (const body of bodies) body.animation?.setPlaying(running());
-    if (!running()) { cancelAnimationFrame(frame); frame = 0; }
+    if (!running()) { cancelAnimationFrame(frame); frame = 0; scrollDistance = 0; }
     start();
   }
   function clearGrabs() {
@@ -90,6 +92,10 @@ export function initPlayground(panel) {
     const elapsed = previousTime ? Math.min((time - previousTime) / 1000, .05) : 0;
     accumulator += elapsed;
     previousTime = time;
+    if (scrollDistance) {
+      applyScrollImpulse(bodies, scrollDistance, bounds);
+      scrollDistance = 0;
+    }
     while (accumulator >= tick) {
       for (const grab of grabs.values()) hold(grab, tick);
       stepWorld(bodies, bounds, tick, gravity);
@@ -221,6 +227,8 @@ export function initPlayground(panel) {
 
   function isExpanded() { return document.fullscreenElement === panel || panel.classList.contains('is-expanded'); }
   function syncFullscreen() {
+    scrollDistance = 0;
+    previousScrollY = window.scrollY;
     const expanded = isExpanded();
     panel.classList.toggle('is-fullscreen', expanded);
     fullscreen.setAttribute('aria-pressed', String(expanded));
@@ -259,6 +267,7 @@ export function initPlayground(panel) {
   pause.addEventListener('click', () => { paused = !paused; clearGrabs(); syncPause(); });
   reset.addEventListener('click', () => {
     clearGrabs();
+    scrollDistance = 0;
     uploadGeneration++;
     for (const body of [...bodies]) if (body.uploaded) removeUploaded(body);
     message('Playground reset.');
@@ -274,6 +283,14 @@ export function initPlayground(panel) {
     syncPause();
   }
   motion.addEventListener('change', updateMotion);
+  // Actual page movement covers wheel, touch, keyboard, and scrollbar input.
+  // Always update the baseline so sleeping scenes never replay missed scrolling.
+  window.addEventListener('scroll', () => {
+    const distance = window.scrollY - previousScrollY;
+    previousScrollY = window.scrollY;
+    if (!running() || motion.matches || isExpanded()) return;
+    scrollDistance = clamp(scrollDistance + distance, -90, 90);
+  }, { passive: true });
   document.addEventListener('visibilitychange', () => { clearGrabs(); syncPause(); });
   new IntersectionObserver(entries => { visible = entries[0].isIntersecting; if (!visible) clearGrabs(); syncPause(); }).observe(panel);
   new ResizeObserver(() => measure()).observe(stage);

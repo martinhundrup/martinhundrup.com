@@ -1,6 +1,33 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createBody, collideBodies, confineBody, extents, stepWorld } from '../physics.js';
+import { createBody, applyScrollImpulse, collideBodies, confineBody, extents, stepWorld, MAX_SPEED } from '../physics.js';
+
+test('scrolling nudges free objects in either direction and leaves held objects alone', () => {
+  const left = createBody({ x: 100 });
+  const right = createBody({ x: 300, mass: 3 });
+  const held = createBody({ x: 200, grabbed: true, vy: 25, spin: .4 });
+  const bounds = { width: 400, height: 300 };
+  applyScrollImpulse([left, right, held], 60, bounds);
+  assert.ok(left.vy > right.vy && right.vy > 0);
+  assert.ok(left.spin < 0 && right.spin > 0);
+  assert.equal(held.vy, 25);
+  assert.equal(held.spin, .4);
+  applyScrollImpulse([left, right], -60, bounds);
+  assert.ok(Math.abs(left.vy) < .0001 && Math.abs(right.vy) < .0001);
+  assert.ok(Math.abs(left.spin) < .0001 && Math.abs(right.spin) < .0001);
+});
+
+test('large page jumps are bounded and repeated scrolling respects the speed limit', () => {
+  const jump = createBody({ x: 100 });
+  const capped = createBody({ x: 100 });
+  const bounds = { width: 400, height: 300 };
+  applyScrollImpulse([jump], 100000, bounds);
+  applyScrollImpulse([capped], 90, bounds);
+  assert.equal(jump.vy, capped.vy);
+  for (let i = 0; i < 1000; i++) applyScrollImpulse([jump], 90, bounds);
+  assert.ok(Math.hypot(jump.vx, jump.vy) <= MAX_SPEED);
+  assert.ok(Math.abs(jump.spin) <= 5);
+});
 
 test('an offset impact transfers momentum and rotation without adding energy', () => {
   const a = createBody({ x: 90, y: 100, width: 40, height: 40, vx: 150, mass: 2 });

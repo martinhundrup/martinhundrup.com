@@ -33,7 +33,7 @@ Projects cycle every five seconds; appearances every six. Cycling pauses during 
 
 Grab Shroomie, a label, the idea note, or a star and throw it around the panel. Objects drift, spin, bounce off the sides, and knock into one another. With an object focused, arrow keys move it and Space or Enter gives it a nudge. Pause freezes motion while still allowing manual dragging; Reset restores the starting arrangement.
 
-Scrolling the page nudges the objects in the direction of the scroll and adds a little spin, in either gravity mode. Uploaded images respond too. Scroll impulses are bounded, skip held objects, and stop while paused, offscreen, fullscreen, or when reduced motion is enabled.
+Scrolling down gives the objects upward momentum; scrolling up gives them downward momentum, with a little spin in either gravity mode. Uploaded images respond too. Scroll impulses are bounded, skip held objects, and stop while paused, offscreen, fullscreen, or when reduced motion is enabled.
 
 Pause also freezes Shroomie’s animation and uploaded GIFs. Play continues their frame clocks from where they stopped; GIFs added while paused start frozen. Large or unusual GIFs that exceed the decoder’s resource budget use a static preview while paused and native animation while playing. GIFs also sleep with the chamber when offscreen or in a hidden tab.
 

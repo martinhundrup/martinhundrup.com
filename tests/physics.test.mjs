@@ -2,19 +2,21 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createBody, applyScrollImpulse, collideBodies, confineBody, extents, stepWorld, MAX_SPEED } from '../physics.js';
 
-test('scrolling nudges free objects in either direction and leaves held objects alone', () => {
+test('scroll down pushes objects upward, scroll up pushes downward, and held objects stay unchanged', () => {
   const left = createBody({ x: 100 });
   const right = createBody({ x: 300, mass: 3 });
   const held = createBody({ x: 200, grabbed: true, vy: 25, spin: .4 });
   const bounds = { width: 400, height: 300 };
   applyScrollImpulse([left, right, held], 60, bounds);
-  assert.ok(left.vy > right.vy && right.vy > 0);
-  assert.ok(left.spin < 0 && right.spin > 0);
+  assert.ok(left.vy < right.vy && right.vy < 0);
+  assert.ok(left.spin > 0 && right.spin < 0);
   assert.equal(held.vy, 25);
   assert.equal(held.spin, .4);
   applyScrollImpulse([left, right], -60, bounds);
   assert.ok(Math.abs(left.vy) < .0001 && Math.abs(right.vy) < .0001);
   assert.ok(Math.abs(left.spin) < .0001 && Math.abs(right.spin) < .0001);
+  applyScrollImpulse([left, right], -60, bounds);
+  assert.ok(left.vy > right.vy && right.vy > 0);
 });
 
 test('large page jumps are bounded and repeated scrolling respects the speed limit', () => {

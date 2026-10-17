@@ -12,9 +12,10 @@ export function createBody(options) {
 }
 
 export function applyScrollImpulse(bodies, distance, bounds) {
-  // Objects lag behind the chamber as the page moves. Cap large anchor jumps
+  // Scroll down gives objects upward momentum; scroll up gives downward momentum.
+  // Cap large anchor jumps
   // and vary the response slightly so the scene sloshes rather than moving as one.
-  const impulse = clamp(distance, -90, 90) * .9;
+  const impulse = -clamp(distance, -90, 90) * .9;
   for (const body of bodies) {
     if (body.grabbed) continue;
     body.vy += impulse / Math.sqrt(body.mass);

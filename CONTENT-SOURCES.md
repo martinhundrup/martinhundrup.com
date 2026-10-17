@@ -42,3 +42,8 @@ All four article/research cards use imagery published with their linked source, 
 - Medimon research: https://mdpi-res.com/d_attachment/mti/mti-09-00080/article_deploy/html/images/mti-09-00080-g002.png — Figure 2’s annotated character illustrations, from the linked paper. Saved as `medimon-research.webp`; the full figure is contained within the preview without cropping.
 
 The two large PNG sources were proportionally resized to at most 960 pixels wide and converted to WebP for loading speed. No content was changed.
+
+## Bio update, October 16, 2026
+
+- Martin directly supplied his current software engineer role and focus on power system protection, automation, streaming, and analysis. The bio includes a brief note without inferring an employer.
+- https://sporelitegames.com/about and https://sporelitegames.com/ — verified the founder role, Pullman location, and studio work supporting student developers. The studio’s games page, https://sporelitegames.com/indie-games, lists Shroomwood and Plant Panic. Added a linked studio paragraph to the bio and expanded its project description.

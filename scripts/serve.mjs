@@ -6,7 +6,7 @@ const root = fileURLToPath(new URL(process.argv.includes('--dist') ? '../dist/' 
 const portArgument = process.argv.indexOf('--port');
 const port = Number(portArgument >= 0 ? process.argv[portArgument + 1] : process.env.PORT || 3001);
 const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.gif': 'image/gif', '.webp': 'image/webp' };
-const allowed = new Set(['index.html', 'styles.css', 'app.js', 'projects.js']);
+const allowed = new Set(['index.html', 'styles.css', 'app.js', 'projects.js', 'physics.js', 'playground.js', 'carousel.js', 'gif-player.js']);
 createServer(async (request, response) => {
   try {
     const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);

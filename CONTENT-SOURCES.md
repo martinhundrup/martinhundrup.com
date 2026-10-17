@@ -31,3 +31,14 @@ Martin supplied the links below on October 16, 2026. All are included directly, 
 - https://wsugamedev.org/ — club website, added to the project collection and linked from the bio. Club membership resources and the homepage were verified publicly.
 
 `assets/sporelite-preview.webp` and `assets/wsugamedev-preview.webp` are actual homepage captures at 1280×800, using the live HTML and original assets. The preview browser’s direct origin request returned 403, so it rendered the unmodified HTML fetched successfully by the local HTTP client, preserving each page’s original URL for its assets. No site content was restyled for the captures. Both screenshots were visually inspected.
+
+## Article preview imagery
+
+All four article/research cards use imagery published with their linked source, saved locally. The existing YouTube and Facebook video thumbnails remain in place.
+
+- Student spotlight: https://wpcdn.web.wsu.edu/wp-vcea/uploads/sites/3466/2025/09/IMG_6431-792x594.png — Martin beside the SEL sign, shown within the spotlight article. Saved as `spotlight-article.webp`.
+- Outstanding students: https://wpcdn.web.wsu.edu/news/uploads/sites/2797/2025/04/outstandingstudents-1024x676.jpg — award winners, from the article’s featured image.
+- Crimson Game Jam: https://wpcdn.web.wsu.edu/news/uploads/sites/2797/2025/11/CrimsonGameJam-1024x676.jpg — participants, from the article’s featured image.
+- Medimon research: https://mdpi-res.com/d_attachment/mti/mti-09-00080/article_deploy/html/images/mti-09-00080-g002.png — Figure 2’s annotated character illustrations, from the linked paper. Saved as `medimon-research.webp`; the full figure is contained within the preview without cropping.
+
+The two large PNG sources were proportionally resized to at most 960 pixels wide and converted to WebP for loading speed. No content was changed.

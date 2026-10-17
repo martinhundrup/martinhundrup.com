@@ -1,9 +1,10 @@
 import { projects } from './projects.js';
+import { initPlayground } from './playground.js';
+import { initCarousel } from './carousel.js';
 const grid = document.querySelector('#project-grid');
-const moreButton = document.querySelector('#show-more');
+const projectCarousel = initCarousel(document.querySelector('#project-carousel'));
 const filters = [...document.querySelectorAll('[data-filter]')];
 let activeFilter = 'all';
-let expanded = false;
 
 function projectCard(project) {
   const link = document.createElement('a');
@@ -32,36 +33,20 @@ function projectCard(project) {
 }
 function renderProjects() {
   const matching = projects.filter(project => activeFilter === 'all' || project.category === activeFilter);
-  const visible = expanded ? matching : matching.slice(0, 6);
-  grid.replaceChildren(...visible.map(projectCard));
-  moreButton.hidden = matching.length <= 6;
-  moreButton.replaceChildren(document.createTextNode(expanded ? 'A little less' : 'More from the collection'));
-  const icon = document.createElement('span'); icon.setAttribute('aria-hidden', 'true'); icon.textContent = expanded ? '−' : '+'; moreButton.append(icon);
-  moreButton.setAttribute('aria-expanded', String(expanded)); moreButton.setAttribute('aria-controls', 'project-grid');
-  document.querySelector('#project-status').textContent = `Showing ${visible.length} of ${matching.length} ${activeFilter === 'all' ? 'projects' : activeFilter}.`;
+  grid.replaceChildren(...matching.map(projectCard));
+  projectCarousel.refresh();
+  document.querySelector('#project-status').textContent = `${matching.length} ${activeFilter === 'all' ? 'projects' : activeFilter} in the carousel.`;
 }
 for (const filter of filters) {
   const category = filter.dataset.filter;
   document.querySelector(`[data-count="${category}"]`).textContent = projects.filter(project => category === 'all' || project.category === category).length;
   filter.addEventListener('click', () => {
-    activeFilter = category; expanded = false;
+    activeFilter = category;
     for (const button of filters) { const selected = button === filter; button.classList.toggle('active', selected); button.setAttribute('aria-pressed', String(selected)); }
     renderProjects();
   });
 }
-moreButton.addEventListener('click', () => {
-  expanded = !expanded; renderProjects();
-  if (!expanded) document.querySelector('#projects').scrollIntoView({ behavior: 'instant' });
-});
-const shroomie = document.querySelector('.shroomie');
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-// GIFs don't honor prefers-reduced-motion themselves; use a still frame.
-const updateMotion = () => { shroomie.querySelector('img').src = reducedMotion.matches ? 'assets/shroomie-still.png' : 'assets/shroomie.gif'; };
-updateMotion();
-reducedMotion.addEventListener('change', updateMotion);
-shroomie.addEventListener('click', () => {
-  if (!reducedMotion.matches) { shroomie.classList.remove('jumping'); void shroomie.offsetWidth; shroomie.classList.add('jumping'); }
-});
-shroomie.addEventListener('animationend', () => shroomie.classList.remove('jumping'));
+initCarousel(document.querySelector('#appearance-carousel'), { interval: 6000 });
+initPlayground(document.querySelector('.hero-art'));
 document.querySelector('#year').textContent = new Date().getFullYear();
 renderProjects();
